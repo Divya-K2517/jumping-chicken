@@ -24,12 +24,22 @@ class Chicken ():
         self.rect.left = WIDTH/2
         self.jumping = False
         self.jvelocity = 0
-        self.gravity = 1.2
+        self.gravity = 1.5
         self.score = 0
         self.high_score = 0
         self.font = pygame.font.Font("T-rex game/font.ttf", 15)
         self.facing_right = True
+        #clouds
+        self.cloud1, self.cloud2 = pygame.image.load("jumping chicken/clouds.jpg"), pygame.image.load("jumping chicken/clouds.jpg")
+        self.cloud1, self.cloud2 = pygame.transform.scale(self.cloud1, (WIDTH, HEIGHT)), pygame.transform.scale(self.cloud2, (WIDTH, HEIGHT))
+        self.cloud1_rect, self.cloud2_rect = self.cloud1.get_rect(), self.cloud2.get_rect()
+        self.cloud1_rect.top = 0
+        self.cloud2_rect.bottom = self.cloud1_rect.top #drawing second cloud image on top of first
     def draw(self):
+        #drawing clouds
+        screen.blit(self.cloud1, self.cloud1_rect)
+        screen.blit(self.cloud2, self.cloud2_rect)
+        #drawing chicken
         if self.facing_right:
             screen.blit(self.image, self.rect)
         else:
@@ -39,7 +49,16 @@ class Chicken ():
         high_score_text = self.font.render("High score: " + str(int(self.high_score)), True, (0,0,0))
         screen.blit(high_score_text, (WIDTH-130, 0))
     def update(self):
+        global game_speed
         global game_over
+        #cloud movement
+        self.cloud1_rect.top += game_speed
+        self.cloud2_rect.bottom += game_speed
+        if self.cloud1_rect.top > HEIGHT:
+            self.cloud1_rect.bottom = self.cloud2_rect.top
+        if self.cloud2_rect.top > HEIGHT:
+            self.cloud2_rect.bottom = self.cloud1_rect.top
+        #chicken movement
         if not game_over:
             keys = pygame.key.get_pressed()
             if keys[pygame.K_LEFT] or keys[pygame.K_a]:
@@ -109,9 +128,9 @@ def game_over_screen():
     game_over = True
 
 def spawn_platform():
-    new_platform = Platform(random.randint(0,WIDTH-int(WIDTH/4)), random.randint(chicken.rect.width,int(WIDTH/5)))
+    new_platform = Platform(random.randint(0,WIDTH-int(WIDTH/4)), random.randint(chicken.rect.width/2,int(WIDTH/5)))
     while pygame.sprite.spritecollideany(new_platform, platforms):
-        new_platform = Platform(random.randint(0,WIDTH-int(WIDTH/4)), random.randint(chicken.rect.width,int(WIDTH/5)))
+        new_platform = Platform(random.randint(0,WIDTH-int(WIDTH/4)), random.randint(chicken.rect.width/2,int(WIDTH/5)))
     platforms.add(new_platform)
 
 #objects
@@ -150,10 +169,10 @@ while running:
         checkcollision(p, chicken)
 
     game_speed += 0.008
+    chicken.gravity += 0.001 #to keep up with the increasing speed
 
     if chicken.rect.bottom > HEIGHT or game_over:
-        game_over_screen()
-    
+        game_over_screen()  
     #resetting game
     keys = pygame.key.get_pressed()
     if keys[pygame.K_r]:
@@ -164,7 +183,6 @@ while running:
         chicken.score = 0
         chicken.facing_right = True
         platforms.add(Platform(random.randint(0,WIDTH-int(WIDTH/4)), random.randint(chicken.rect.width,int(WIDTH/4))))
-        
 
     pygame.display.flip() #updates display
 
