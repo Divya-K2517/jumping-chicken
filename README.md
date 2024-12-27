@@ -14,9 +14,11 @@ To start the game,
 * run main.py  
 
 **Controls:**  
-* 
+* Use the right, left, & up arrows (or the a, d, & w keys) to jump onto each platform
+* After your first jump, the ground is no longer a safe zone, and if you touch i again the game is over
+* Speed of the platforms increases as time goes on
 
 **Credits:**  
 * Font: https://www.dafont.com/bitmap.php  
-* Dino png: https://github.com/shivamshekhar/Chrome-T-Rex-Rush.git  
-* Cacti png: https://commons.wikimedia.org/wiki/File:1_Cactus_Chrome_Dino.webp  
+* Chicken png: https://www.vexels.com/png-svg/preview/230684/cute-chicken-flat
+* Clouds png: https://www.pinterest.com/pin/607352699724285315/
