@@ -18,7 +18,7 @@ To start the game,
 
 **Controls:**  
 * Use the right, left, & up arrows (or the a, d, & w keys) to jump onto each platform
-* After your first jump, the ground is no longer a safe zone, and if you touch i again the game is over
+* After your first jump, the ground is no longer a safe zone, and if you touch it again the game is over
 * Speed of the platforms increases as time goes on
 
 **Credits:**  
