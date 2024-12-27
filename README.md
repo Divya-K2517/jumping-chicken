@@ -1,7 +1,7 @@
 # Jumping Chicken
 
 ![Screen Recording 2024-12-26 at 8 36 22 PM (2)](https://github.com/user-attachments/assets/e1ca558b-51d4-4f5f-a674-618116e949c2)
-<img width="501" alt="Screenshot 2024-12-26 at 8 36 16 PM" src="https://github.com/user-attachments/assets/90892f04-940b-4acf-8b8f-c510e6338e69" />
+<img width="501" height = "700" alt="Screenshot 2024-12-26 at 8 36 16 PM" src="https://github.com/user-attachments/assets/90892f04-940b-4acf-8b8f-c510e6338e69" />
 
 
 
