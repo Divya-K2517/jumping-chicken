@@ -12,6 +12,26 @@ pygame.display.set_caption("jumping chicken")
 clock = pygame.time.Clock()
 running = True
 game_over = False
+welcome = True
+
+class Platform(pygame.sprite.Sprite):
+    def __init__(self, x,w):
+        super().__init__()
+        self.image = pygame.Surface((w,15))
+        self.image.fill((17,90,44))
+        self.rect = self.image.get_rect(topleft=(x, 0))
+        self.landed_on = False
+    def draw(self, surface):
+        surface.blit(self.image, self.rect)
+    def update(self):
+        global game_speed
+        if self.rect.bottom > HEIGHT - 20:
+            if abs(chicken.rect.bottom - self.rect.top) < 10:
+                global game_over
+                game_over = True
+        self.rect.bottom += game_speed
+        if self.rect.bottom > HEIGHT:
+            self.kill()
 
 class Chicken ():
     def __init__(self):
@@ -24,7 +44,7 @@ class Chicken ():
         self.rect.left = WIDTH/2
         self.jumping = False
         self.jvelocity = 0
-        self.gravity = 1.5
+        self.gravity = 1.2
         self.score = 0
         self.high_score = 0
         self.font = pygame.font.Font("T-rex game/font.ttf", 15)
@@ -83,28 +103,9 @@ class Chicken ():
         self.rect.left = WIDTH/2
         self.jumping = False
         self.jvelocity = 0
-            
-class Platform(pygame.sprite.Sprite):
-    def __init__(self, x,w):
-        super().__init__()
-        self.image = pygame.Surface((w,15))
-        self.image.fill((17,90,44))
-        self.rect = self.image.get_rect(topleft=(x, 0))
-        self.landed_on = False
-    def draw(self, surface):
-        surface.blit(self.image, self.rect)
-    def update(self):
-        global game_speed
-        if self.rect.bottom > HEIGHT - 20:
-            if abs(chicken.rect.bottom - self.rect.top) < 10:
-                global game_over
-                game_over = True
-        self.rect.bottom += game_speed
-        if self.rect.bottom > HEIGHT:
-            self.kill()
         
 def checkcollision(p,c):
-    landing_tolerance = 7
+    landing_tolerance = 9
     if p.rect.top - landing_tolerance <= c.rect.bottom <= p.rect.top + landing_tolerance and c.rect.right >= p.rect.left and c.rect.left <= p.rect.right:
         print("collision detected")
         c.rect.bottom = p.rect.top
@@ -133,6 +134,44 @@ def spawn_platform():
         new_platform = Platform(random.randint(0,WIDTH-int(WIDTH/4)), random.randint(chicken.rect.width/2,int(WIDTH/5)))
     platforms.add(new_platform)
 
+def welcome_screen():
+    global welcome
+    while welcome:
+        screen.fill((203,245,255))
+        wfont = pygame.font.Font("jumping chicken/font.ttf", 40)
+        wtext = wfont.render("Welcome!", True, (0,0,0))
+        screen.blit(wtext, (WIDTH/4 + 20, HEIGHT/10))
+        #instructions
+        ifont = pygame.font.Font("jumping chicken/font.ttf", 15)
+        instructions = "Instructions:\n\nUse the right, left, & up arrows (or the\na, d, & w keys) to help the chicken jump to\neach platform\n\nAfter your first jump, the ground is no\nlonger a safe zone, and if you touch it\nagain the game is over\n\nSpeed will increase as time goes on\n\nPress play to start"
+        lines = instructions.split("\n")
+        for i, line in enumerate(lines):
+            text = ifont.render(line, True, (0,0,0))
+            screen.blit(text, (WIDTH/6, HEIGHT/8 + 50 + (30*i)))
+        #play button
+        play_button = pygame.image.load("jumping chicken/play.jpeg")
+        play_button_rect = play_button.get_rect()
+        play_button_rect.bottom = HEIGHT/16 * 15
+        play_button_rect.centerx = WIDTH/2
+        screen.blit(play_button, play_button_rect)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                global running
+                running = False
+                welcome = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if play_button_rect.collidepoint(event.pos):
+                    welcome = False
+        #tilted chicken image
+        cimage = pygame.image.load("jumping chicken/chicken.png")
+        cimage = pygame.transform.scale(cimage, (70,70))
+        cimage = pygame.transform.rotate(cimage, 20)
+        cimage_rect = cimage.get_rect()
+        cimage_rect.center = (WIDTH/4 + 10, HEIGHT/10 - 10)
+        screen.blit(cimage, cimage_rect)
+        pygame.display.flip()  # Update the display
+        clock.tick(60)  # Control the frame rate
+        
 #objects
 chicken = Chicken()
 platforms = pygame.sprite.Group()
@@ -141,12 +180,14 @@ platforms.add(platform)
 
 #main loop
 while running:
+    if welcome:
+        welcome_screen()
+
     dt = clock.tick(60)/1000  #time passed since last frame
     #so the user can close the game:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running=False
-
     screen.fill((203,245,255))
     #game code
     chicken.draw()
@@ -161,13 +202,12 @@ while running:
                 highest_p -= 20
                 if highest_p >= HEIGHT/4:
                     spawn_platform()
-                
+    #drawing platforms, checking if chicken lands on them           
     platforms.draw(screen)
     platforms.update()
-
     for p in platforms:
         checkcollision(p, chicken)
-
+    #adjusting game speed
     game_speed += 0.008
     chicken.gravity += 0.001 #to keep up with the increasing speed
 
