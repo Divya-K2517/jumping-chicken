@@ -1,4 +1,4 @@
-# T-rex game
+# Jumping Chicken
 
 ![Screen Recording 2024-12-26 at 8 36 22 PM (2)](https://github.com/user-attachments/assets/e1ca558b-51d4-4f5f-a674-618116e949c2)
 
